@@ -14,11 +14,12 @@ export class MsalProvider extends Component {
 		user: null,
 		accessToken: null
 	};
+	
 	config = {
 		auth: {
-            clientId: "28dcfeab-d845-4131-928d-e1469bd40617",
-            authority: 'https://login.microsoftonline.com/e2ba673a-b782-4f44-b0b5-93da90258200',
-            redirectUri: 'http://localhost:3000/',
+            clientId: process.env.REACT_APP_CLIENT_ID,
+        	authority: process.env.REACT_APP_AUTHORITY,
+        	redirectUri: process.env.REACT_APP_REDIRECT_URI,
         },
         cache: {
             cacheLocation: "localStorage", // This configures where your cache will be stored
@@ -35,8 +36,8 @@ export class MsalProvider extends Component {
 		const publicClient = new msal.PublicClientApplication(this.config);
 		this.setState({ publicClient });
 
-        const user = publicClient.getAccount();
-        const isAuthenticated = (user != null);
+        const users = publicClient.getAllAccounts();
+        const isAuthenticated = (users && users.length > 0);
 
 		if(!isAuthenticated) {
         	var response = await publicClient.handleRedirectPromise(); 
@@ -44,7 +45,7 @@ export class MsalProvider extends Component {
 			if (response) {
 				this.setState({ 
 					isLoading: false, 
-					user: publicClient.getAccount(),
+					user: publicClient.getAllAccounts()[0],
 					isAuthenticated : true,
 					accessToken: response.accessToken,
 					publicClient: publicClient
@@ -56,7 +57,7 @@ export class MsalProvider extends Component {
 
 		this.setState({ 
 			isLoading: false, 
-			user: user,
+			user: (users && users.length > 0) ? users[0] : null,
 			isAuthenticated : isAuthenticated,
 			publicClient: publicClient,
 			accessToken: null
