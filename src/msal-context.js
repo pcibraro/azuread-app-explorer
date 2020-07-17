@@ -19,7 +19,7 @@ export class MsalProvider extends Component {
 		auth: {
             clientId: process.env.REACT_APP_CLIENT_ID,
         	authority: process.env.REACT_APP_AUTHORITY,
-        	redirectUri: process.env.REACT_APP_REDIRECT_URI,
+        	redirectUri: window.location.href,
         },
         cache: {
             cacheLocation: "localStorage", // This configures where your cache will be stored
